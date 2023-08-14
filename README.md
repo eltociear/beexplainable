@@ -21,20 +21,28 @@
 * [Data Annotation](#data-annotation)
 * [Data Preprocessing](#data-preprocessing)
 * [Training and Validation](#training-and-validation)
-* [XAI Experiments](#xai-experiments)
+* [Preliminary XAI Experiments without Humans](#preliminary-xai-experiments-without-humans)
+* [Human-in-the-Loop XAI Experiments](#human-in-the-loop-xai-experiments)
 * [Conclusion](#conclusion)
-* [Citation](#citation)
 
 ## Installation
 
-TF und Torch version, Stable Diffusion...
+In order to run the data preprocessing routines described below, you will need:
 
-In order to run some of the experiments in this repository, you will need the following libraries:
+* [labelstudio-converter](https://github.com/heartexlabs/label-studio-converter): reads segmentation masks annotated in [Label Studio](https://labelstud.io/)
 
-* [labelstudio-converter](https://github.com/heartexlabs/label-studio-converter): for reading segmentation masks annotated in Label Studio
-* [quantus](https://github.com/understandable-machine-intelligence-lab/Quantus): for computing the localisation metrics
-* [tf-explain](https://github.com/sicara/tf-explain) and [innvestigate](https://github.com/albermax/innvestigate): for the rest of the XAI notebooks
-* [wingbeats](https://github.com/TeodorChiaburu/wingbeats): for building the CNNs
+For building the neural network:
+* [wingbeats](https://github.com/TeodorChiaburu/wingbeats)
+
+For the (preliminary) XAI experiments with feature attribution methods and TCAV:
+* [tf-explain](https://github.com/sicara/tf-explain), [innvestigate](https://github.com/albermax/innvestigate) and [xplique](https://github.com/deel-ai/xplique)
+* [quantus](https://github.com/understandable-machine-intelligence-lab/Quantus): for computing localisation and faithfulness metrics of the explanations
+
+For generating concept images used in the Human-in-the-Loop Experiment:
+* Stable Difussion v1.5 (see [notebook](notebooks/Concepts_StableDiff.ipynb))
+
+Note that the model training and evaluation is done in TensorFlow 2.8. Only the concept image generation requires PyTorch 1.10 (see [requirements](requirements.txt)). 
+The Python version should be at least 3.10.
 
 ## Introduction
  
@@ -79,7 +87,7 @@ For instance, to find the index for the species *Anthidium manicatum*,
 type the species name in the search bar of the *iNaturalist* site and 
 copy the number at the end of the url (it should be 62453).
 
-We checked that the wild bee dataset (both mini and full) did not contain 
+We checked that the wild bee dataset did not contain 
 duplicates from the [iNat Challenge 2021](https://www.kaggle.com/c/inaturalist-2021), 
 since we may be interested in utilizing models pretrained on that task. We 
 also checked for duplicates within our own datasets and it turned out 
@@ -107,7 +115,7 @@ Further details on how to decode the mask coordinates follow below.
 ## Data Preprocessing
 
 The scripts [create_metafiles_mini.py](scripts/create_metafiles_mini.py) and 
-[create_metafiles_all.py](scripts/create_metafiles_all.py) create 
+[create_metafiles_all.py](scripts/create_metafiles_all.py) build 
 metafiles from the json-files downloaded from Label Studio similar to the 
 **CUB200** format. The files created are:
 
@@ -187,17 +195,9 @@ be found in the cooresponding [notebooks](notebooks), plots for [training curves
 [ROC-AUC curves](figures/roc_auc), [worst predictions](figures/worst_preds) and on our freely online available 
 [TensorBoard Experiment](https://tensorboard.dev/experiment/VwaTD5OBSwuxpgK2JH4wCA/#).
 
-## XAI Experiments
+## Preliminary XAI Experiments without Humans
 
 ### Motivation and Related Work
-
-When working with such complex structures as an insect taxonomic tree, 
-model explainability becomes a requirement rather than a nice-to-have feature. 
-The entomologists delegated to supervise the monitoring procedure need to 
-understand what exactly led their model to the given output. 
-Nowadays, there is a wide array of [XAI methods](https://christophm.github.io/interpretable-ml-book/index.html) 
-and going into the details of all the possible categorisations would exceed 
-the scope of this preliminary work.
 
 The XAI community has been working arduously in the past years to develop 
 new XAI methods - [Guidotti et al.](https://arxiv.org/abs/1802.01933) - as well as to formalize the notions of 
@@ -308,6 +308,10 @@ flipping. On the contrary, sometimes it was visibly less efficient.
 
 ![PFMCD2](figures/pf_mcd_testset/Andrena_bicolor_pfmcd_curves.png)
 
+## Human-in-the-Loop XAI Experiments
+
+
+
 ## Conclusion
 
 Our results suggest that evaluation of XAI methods remains 
@@ -320,24 +324,3 @@ model, the dataset and the evaluations provided in this work will
 help researchers to develop models, XAI methods and ML-assisted 
 annotation tools to support entomologists and ultimately improve 
 our understanding of biodiversity.
-
-## Citation
-
-The accompanying paper submitted and presented on the XAI Workshop of 
-CVPR 2022 can be downloaded [here](https://arxiv.org/abs/2206.07497).
-
-If you find our work interesting or useful in your research, please cite us 
-as follows:
-
-```
-@misc{https://doi.org/10.48550/arxiv.2206.07497,
-      doi = {10.48550/ARXIV.2206.07497}, 
-      url = {https://arxiv.org/abs/2206.07497}, 
-      author = {Chiaburu, Teodor and Biessmann, Felix and Hausser, Frank},
-      keywords = {Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences}, 
-      title = {Towards ML Methods for Biodiversity: A Novel Wild Bee Dataset and Evaluations of XAI Methods for ML-Assisted Rare Species Annotations},
-      publisher = {arXiv}, 
-      year = {2022}, 
-      copyright = {Creative Commons Attribution Non Commercial Share Alike 4.0 International}
-}
-```

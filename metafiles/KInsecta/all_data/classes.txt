@@ -1,0 +1,7 @@
+1 Apis_mellifera
+2 Bombus_terrestris
+3 Episyrphus_balteatus
+4 Eristalis_tenax
+5 Panorpa_communis
+6 Polistes_dominula
+7 Vespa_crabro
